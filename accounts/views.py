@@ -79,12 +79,12 @@ def get_user(request) :
         })
 
 
-#   function to disable the user account
+#   function to disable the user account (to deactivate a user account temporarily)
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated, IsAdminUser])
 def disable_user_account(request) : 
-    
+
     if request.method == 'POST' : 
 
         username = request.POST.get('username')
@@ -94,6 +94,37 @@ def disable_user_account(request) :
             user = User.objects.get(username = username)
             user.is_active = False
             user.save()
+
+            return Response({
+                'message' : 'User account has been disabled'
+            })
+
+        except User.DoesNotExist : 
+
+            return Response({
+                'error' : 'User does not exist'
+            })
+
+
+#   function to activate back the user account which was already disabled (deactivated)
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated, IsAdminUser])
+def enable_user_account(request) : 
+
+    if request.method == 'POST' : 
+
+        username = request.POST.get('username')
+
+        try : 
+
+            user = User.objects.get(username = username)
+            user.is_active = True
+            user.save()
+
+            return Response({
+                'message' : 'User account has been activated successfully'
+            })
 
         except User.DoesNotExist : 
 
