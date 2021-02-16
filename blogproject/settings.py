@@ -32,10 +32,16 @@ INSTALLED_APPS = [
 
     #   third party installed apps
     'rest_framework',
+    'rest_framework.authtoken',
 
     #   this projects applications
     'accounts.apps.AccountsConfig'
 
+]
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'accounts.backends.EmailAuthentication'
 ]
 
 MIDDLEWARE = [
@@ -74,8 +80,11 @@ WSGI_APPLICATION = 'blogproject.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'react-blog',
+        'USER' : 'postgres',
+        'PASSWORD' : 'Ankit@383',
+        'HOST' : 'localhost'
     }
 }
 
