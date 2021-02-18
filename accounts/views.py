@@ -1,3 +1,4 @@
+from accounts.validators import is_email
 from django.contrib.auth.models import User
 from django.http.response import JsonResponse
 from django.shortcuts import render
@@ -11,8 +12,71 @@ from rest_framework import status, exceptions
 from .serializers import UserAuthenticationSerializer
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.authentication import TokenAuthentication
+from django.db.models import Q
 
-#   function to handle the login process and returning the auth token of the user
+"""
+Function to handle user registeration
+@params : 
+username : username of the user
+fname : full name of the user
+email : email address of the user
+password : password of the user (stored in encrypted form)
+"""
+@api_view(['POST'])
+def signup_user(request) : 
+    if request.method == 'POST' : 
+        fname = request.POST.get('fname')
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        fname = fname.split(' ', 2)
+        if len(fname) >= 2 : 
+            last_name = fname[1]
+        else : 
+            last_name = ''
+
+        try : 
+
+            #   validating email address and username
+            if not is_email(email) : 
+                return Response({
+                    'message' : 'Enter a valid email address'
+                })
+
+            if User.objects.filter(Q(username = username) | Q(email=email)).exists() : 
+                return Response({
+                    'message' : 'User with those credentials already exists'
+                })
+
+            user = User.objects.create_user(
+                username = username,
+                first_name = fname[0],
+                last_name = last_name,
+                email = email,
+                password = password
+            )
+            return Response({
+                'user' : UserAuthenticationSerializer(user).data
+            }, status=200)
+        except : 
+            return Response({
+                'message' : 'User creation failed.'
+            })
+
+    else : 
+        return Response({
+            'message' : 'Invalid method (only POST method accepted)'
+        })
+
+"""
+Function to handle the login process
+Login authentication using username or email address both
+@params : 
+username : username of the user
+email : email address as given by the user during registeration
+password : password of the user as submitted during registeration
+"""
 @api_view(['POST'])
 def login_user(request) : 
     if request.method == 'POST' : 
@@ -51,7 +115,11 @@ def login_user(request) :
         })
 
 
-#   function to get user information
+"""
+Function to get the user details
+@params
+username = username of the user whose details are to be searched
+"""
 @api_view(['GET'])
 def get_user(request) : 
     username = request.GET.get('username')
@@ -79,7 +147,13 @@ def get_user(request) :
         })
 
 
-#   function to disable the user account (to deactivate a user account temporarily)
+"""
+Function to disable a user account
+@params
+authentication = admin authentication required
+permission classes = IsAuthenticated and IsAdminUser
+username = username of the user to be disabled
+"""
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated, IsAdminUser])
@@ -106,7 +180,13 @@ def disable_user_account(request) :
             })
 
 
-#   function to activate back the user account which was already disabled (deactivated)
+"""
+Function to enable the user account which was disabled earlier
+@params
+authentication = admin authentication required
+permission classes = IsAuthenticated and IsAdminUser
+username = username of the user which was disabled
+"""
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated, IsAdminUser])

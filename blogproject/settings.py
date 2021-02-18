@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     #   third party installed apps
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
 
     #   this projects applications
     'accounts.apps.AccountsConfig'
@@ -52,7 +53,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'blogproject.urls'
 
