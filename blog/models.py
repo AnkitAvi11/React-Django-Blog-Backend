@@ -21,10 +21,10 @@ class Blog(models.Model) :
     def __str__(self) : return self.title
 
     #   function to check if the blog is recently published or not
-    # def is_recent(self) : 
-    #     if self.published_on >= datetime.now() - timedelta(days=3) : 
-    #         return True
-    #     return False
+    def is_recent(self) : 
+        if self.published_on >= datetime.now() - timedelta(days=3) : 
+            return True
+        return False
 
     #   overriding the save method and delete method
     def save(self, *args, **kwargs) : 
