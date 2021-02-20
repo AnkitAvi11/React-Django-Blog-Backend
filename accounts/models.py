@@ -23,6 +23,17 @@ class UserProfile(models.Model) :
     def __str__(self) : 
         return self.user.username
 
+    #   overriding the save method
+    def save(self, *args, **kwargs) : 
+        try : 
+            this = UserProfile.objects.get(id = self.id)
+            if this.profile_pic != self.profile_pic and this.profile_pic != 'default.png' : 
+                this.profile_pic.delete(save=False)
+        except : 
+            pass
+
+        return super().save(*args, **kwargs)
+
 
 #   creating a trigger to automatically create user profile
 def create_user_signal(sender, **kwargs) : 

@@ -4,7 +4,8 @@ from django.urls import path
 from django.urls.conf import include
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from django.conf.urls import handler404
+from django.conf.urls.static import static
+from django.conf import settings
 
 @api_view(['GET'])
 def home_page(request) : 
@@ -16,15 +17,7 @@ def home_page(request) :
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('accounts.urls')),
-    path('', home_page, name='homepage'),
     #   blog url configuration
     path('api/blog/', include('blog.urls'))
-]
+]+static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
 
-#   custom 404 page 
-def handle_404(request, exception) : 
-    data = {}
-    return render(request, '404.html', data)
-
-#   assigning the custom 404 view to the 404 handler
-handler404 = handle_404
