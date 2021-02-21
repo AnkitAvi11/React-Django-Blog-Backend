@@ -18,6 +18,8 @@ class Blog(models.Model) :
         default=datetime.now()
     )
 
+    is_published = models.BooleanField(default=True)
+
     def __str__(self) : return self.title
 
     #   function to check if the blog is recently published or not

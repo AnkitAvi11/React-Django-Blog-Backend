@@ -41,7 +41,7 @@ def create_blog(request) :
         return Response({
             'success' : True
         })
-    except Exception as e: 
+    except Exception as e : 
         return Response({
             'error' : 'Blog could not be created'
         })
@@ -49,11 +49,36 @@ def create_blog(request) :
 
 @api_view(['GET'])
 def get_all_blogs(request) : 
-    
     try : 
-        blogs = Blog.objects.all().order_by('-published_on')
+        blogs = Blog.objects.filter(user__is_active=True).order_by('-published_on')
         return Response(BlogSerializer(blogs, many=True).data, status=200)
     except Blog.DoesNotExist : 
         return Response({
             'message' : 'No blogs found'
+        })
+
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def save_as_draft(request) : 
+    user = request.user
+    title = request.POST.get('title')
+    description = request.POST.get('description')
+    cover_image = request.FILES.get('cover_image', None)
+    content = request.POST.get('content')
+
+    try : 
+        Blog.objects.create(
+            user = user,
+            title = title,
+            description = description,
+            cover_image = cover_image,
+            body = content,
+            is_published = False
+        )
+    except Exception as e : 
+        print("Exception = ", e)
+        return Response({
+            'error' : 'Blog could not be created.'
         })
