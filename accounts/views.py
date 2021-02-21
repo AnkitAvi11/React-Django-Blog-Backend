@@ -104,6 +104,7 @@ def login_user(request) :
                     'message' : 'Account has been disabled'
                 })
             
+            login(request, user)    #   login the user in
             return Response({
                 "user" : UserAuthenticationSerializer(user).data,
                 "token" : token.key

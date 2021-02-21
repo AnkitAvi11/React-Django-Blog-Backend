@@ -36,5 +36,6 @@ class UserAuthenticationSerializer(serializers.ModelSerializer) :
             'email',
             'first_name',
             'last_name',
+            'is_staff',
             'userprofile'
         )

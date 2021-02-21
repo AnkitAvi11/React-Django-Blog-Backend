@@ -7,6 +7,7 @@ from rest_framework.decorators import permission_classes, authentication_classes
 from django.utils.text import slugify
 from datetime import datetime
 from rest_framework.response import Response
+from .serialiazers import BlogSerializer
 
 
 @api_view(['POST'])
@@ -43,4 +44,16 @@ def create_blog(request) :
     except Exception as e: 
         return Response({
             'error' : 'Blog could not be created'
+        })
+
+
+@api_view(['GET'])
+def get_all_blogs(request) : 
+    
+    try : 
+        blogs = Blog.objects.all().order_by('-published_on')
+        return Response(BlogSerializer(blogs, many=True).data, status=200)
+    except Blog.DoesNotExist : 
+        return Response({
+            'message' : 'No blogs found'
         })
