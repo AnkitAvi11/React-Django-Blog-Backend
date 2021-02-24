@@ -20,6 +20,8 @@ class Blog(models.Model) :
 
     is_published = models.BooleanField(default=True)
 
+    is_featured = models.BooleanField(default=False)
+
     def __str__(self) : return self.title
 
     #   function to check if the blog is recently published or not

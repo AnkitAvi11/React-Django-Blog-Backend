@@ -8,7 +8,10 @@ from django.utils.text import slugify
 from datetime import datetime
 from rest_framework.response import Response
 from .serialiazers import BlogSerializer
+import random, string
 
+def random_string_generator(size = 10, chars = string.ascii_lowercase + string.digits): 
+    return ''.join(random.choice(chars) for _ in range(size)) 
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
@@ -16,12 +19,12 @@ from .serialiazers import BlogSerializer
 def create_blog(request) : 
     user = request.user
     title = request.POST.get('title')
+    description = request.POST.get('description', None)
     slug = slugify(title)
 
-    i=0
     while Blog.objects.filter(slug=slug).exists() : 
-        slug = slug+i
-        i += 1
+        slug = "{slug}-{randstr}".format( 
+            slug = slug, randstr = random_string_generator(size = 4))
 
     cover_image = request.FILES.get('cover_image', None)
 
@@ -34,6 +37,7 @@ def create_blog(request) :
             user = user,
             title = title,
             slug = slug,
+            description = description,
             cover_image = cover_image,
             body = body,
             published_on = published_on
@@ -50,35 +54,11 @@ def create_blog(request) :
 @api_view(['GET'])
 def get_all_blogs(request) : 
     try : 
-        blogs = Blog.objects.filter(user__is_active=True).order_by('-published_on')
+        blogs = Blog.objects.filter(user__is_active=True, is_featured=True).exclude(cover_image='').order_by('-published_on')
+        
         return Response(BlogSerializer(blogs, many=True).data, status=200)
     except Blog.DoesNotExist : 
         return Response({
             'message' : 'No blogs found'
         })
 
-
-@api_view(['POST'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
-def save_as_draft(request) : 
-    user = request.user
-    title = request.POST.get('title')
-    description = request.POST.get('description')
-    cover_image = request.FILES.get('cover_image', None)
-    content = request.POST.get('content')
-
-    try : 
-        Blog.objects.create(
-            user = user,
-            title = title,
-            description = description,
-            cover_image = cover_image,
-            body = content,
-            is_published = False
-        )
-    except Exception as e : 
-        print("Exception = ", e)
-        return Response({
-            'error' : 'Blog could not be created.'
-        })
