@@ -13,6 +13,17 @@ import random, string
 def random_string_generator(size = 10, chars = string.ascii_lowercase + string.digits): 
     return ''.join(random.choice(chars) for _ in range(size)) 
 
+
+"""
+Function that deals with the creation of blogs
+@params
+user : user that creates the blog
+title : title of the blog
+description : description of the blog (optional)
+slug : slug fiels to search for a blog
+cover_pic : cover pic for the blog
+body : content of the blog
+"""
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -51,6 +62,9 @@ def create_blog(request) :
         })
 
 
+""" 
+Function to get all the featured blogs from the database where cover_image is not null
+"""
 @api_view(['GET'])
 def get_all_blogs(request) : 
     try : 
