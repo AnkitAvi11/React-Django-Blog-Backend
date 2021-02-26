@@ -63,16 +63,23 @@ def create_blog(request) :
 
 
 """ 
+FEATURED BLOGS
 Function to get all the featured blogs from the database where cover_image is not null
 """
 @api_view(['GET'])
 def get_all_blogs(request) : 
     try : 
-        blogs = Blog.objects.filter(user__is_active=True, is_featured=True).exclude(cover_image='').order_by('-published_on')
+
+        #   trying to get all the blogs
+        blogs = Blog.objects.filter(user__is_active=True, is_featured=True).exclude(cover_image='').order_by('-published_on')[:3]
         
         return Response(BlogSerializer(blogs, many=True).data, status=200)
+
+    #   when the exception occurs of bloggin not existing anymore
     except Blog.DoesNotExist : 
         return Response({
             'message' : 'No blogs found'
         })
+
+
 

@@ -9,7 +9,8 @@ urlpatterns = [
     path('auth/disable/', views.disable_user_account, name='disable_user'),
     path('auth/enable/', views.enable_user_account, name='enable_user_account'),
     path('auth/signup/', views.signup_user, name='signup'),
-
+    path('auth/validate/', views.validate_user, name='validate_user_auth_state')
+    
     #   password reset views
     
 ]

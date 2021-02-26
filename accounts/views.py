@@ -8,11 +8,11 @@ from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
-from rest_framework import status, exceptions
 from .serializers import UserAuthenticationSerializer
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.authentication import TokenAuthentication
 from django.db.models import Q
+from .serializers import UserProfile
 
 """
 Function to handle user registeration
@@ -212,3 +212,20 @@ def enable_user_account(request) :
             return Response({
                 'error' : 'User does not exist'
             })
+
+
+#   function to validate the login state of the user
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+def validate_user(request) : 
+    user = request.user
+    if user is None : 
+        return Response({
+            'error' : 'User is not authenticated'
+        })
+
+    else : 
+        return Response({
+            'user' : UserAuthenticationSerializer(user).data
+        }, status=200)
