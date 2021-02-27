@@ -82,4 +82,15 @@ def get_all_blogs(request) :
         })
 
 
-
+@api_view(['GET'])
+def get_blog(request, blog_slug) : 
+    try : 
+        blog = Blog.objects.get(slug = blog_slug)
+        return Response(
+            BlogSerializer(blog, many=False).data
+        )
+    except Blog.DoesNotExist : 
+        return Response({
+            'error' : 'Blog was not found'
+        }, status=404)
+        

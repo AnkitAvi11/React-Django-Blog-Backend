@@ -229,3 +229,17 @@ def validate_user(request) :
         return Response({
             'user' : UserAuthenticationSerializer(user).data
         }, status=200)
+
+
+
+@api_view(['GET'])
+def get_blog_user(request, user_id) : 
+    try : 
+        user = User.objects.get(id = user_id)
+        return Response(
+            UserAuthenticationSerializer(user).data
+        )
+    except User.DoesNotExist : 
+        return Response({
+            'error' : 'user does not exist'
+        },status=404)
