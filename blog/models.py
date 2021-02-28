@@ -45,3 +45,17 @@ class Blog(models.Model) :
     def delet(self, *args, **kwargs) : 
         self.cover_image.delete(save=False) #   deletes the cover image associated with the blog
         return super().delete(*args, **kwargs)
+
+
+#   comment model
+class Comment (models.Model) : 
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
+    comment = models.TextField(blank=False, null=False)
+    comment_time = models.DateTimeField(default=datetime.now())
+
+
+    def __str__(self) : 
+        return self.comment
+
+    

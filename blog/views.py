@@ -1,4 +1,4 @@
-from blog.models import Blog
+from blog.models import Blog, Comment
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
@@ -7,7 +7,7 @@ from rest_framework.decorators import permission_classes, authentication_classes
 from django.utils.text import slugify
 from datetime import datetime
 from rest_framework.response import Response
-from .serialiazers import BlogSerializer
+from .serialiazers import BlogSerializer, CommentSerializer
 import random, string
 
 def random_string_generator(size = 10, chars = string.ascii_lowercase + string.digits): 
@@ -93,4 +93,18 @@ def get_blog(request, blog_slug) :
         return Response({
             'error' : 'Blog was not found'
         }, status=404)
+
+
+@api_view(['GET'])
+def get_comments(request, blog_id) : 
+    try : 
+        comment = Comment.objects.filter(
+            blog = blog_id
+        ).order_by('-comment_time')
+
+        return Response(CommentSerializer(comment, many=True).data, status=200)
         
+    except Comment.DoesNotExist : 
+        return Response({
+            'error' : 'No comments were found'
+        })
