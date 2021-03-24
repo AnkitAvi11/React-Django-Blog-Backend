@@ -7,12 +7,6 @@ from rest_framework.decorators import api_view
 from django.conf.urls.static import static
 from django.conf import settings
 
-@api_view(['GET'])
-def home_page(request) : 
-    return Response({
-        'message' : 'Hello World from django rest framework!'
-    }, status=200)
-
 #   url patterns of the entire project
 urlpatterns = [
     path('admin/', admin.site.urls),

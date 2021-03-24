@@ -42,12 +42,12 @@ class Blog(models.Model) :
         return super().save(*args, **kwargs)
 
     #   overriding the delete method
-    def delet(self, *args, **kwargs) : 
+    def delete(self, *args, **kwargs) : 
         self.cover_image.delete(save=False) #   deletes the cover image associated with the blog
         return super().delete(*args, **kwargs)
 
 
-#   comment model
+#   comment model for the user comments
 class Comment (models.Model) : 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
@@ -58,4 +58,4 @@ class Comment (models.Model) :
     def __str__(self) : 
         return self.comment
 
-    
+  

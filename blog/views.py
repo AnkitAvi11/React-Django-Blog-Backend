@@ -82,6 +82,7 @@ def get_all_blogs(request) :
         })
 
 
+#   function to get individual blog using the blog slug
 @api_view(['GET'])
 def get_blog(request, blog_slug) : 
     try : 
@@ -95,6 +96,7 @@ def get_blog(request, blog_slug) :
         }, status=404)
 
 
+#   function to get the comments on a blog from the users
 @api_view(['GET'])
 def get_comments(request, blog_id) : 
     try : 
@@ -108,3 +110,37 @@ def get_comments(request, blog_id) :
         return Response({
             'error' : 'No comments were found'
         })
+
+
+#   function to post comment on a blog post
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+def createComment(request) : 
+    blog_id = request.POST.get('blog_id')
+    user = request.user
+    comment = request.POST.get('comment')
+
+    if comment is None : 
+        return Response({
+            'error' : 'Can not submit an empty comment'
+        })
+    
+
+    #   handling the uncertain errors dure to server
+    try : 
+
+        #   creating the comment sent by the user on a blog
+        Comment.objects.create(
+            blog_id = blog_id,
+            user = user
+        )
+    
+    except Exception as e : 
+        e.with_traceback()
+        return Response({
+            'error' : 'Some error occurred due to some technical errors'
+        })
+    
+
