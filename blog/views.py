@@ -71,7 +71,7 @@ def get_all_blogs(request) :
     try : 
 
         #   trying to get all the blogs
-        blogs = Blog.objects.filter(user__is_active=True, is_featured=True).exclude(cover_image='').order_by('-published_on')[:3]
+        blogs = Blog.objects.filter(user__is_active=True).order_by('-published_on')
         
         return Response(BlogSerializer(blogs, many=True).data, status=200)
 
