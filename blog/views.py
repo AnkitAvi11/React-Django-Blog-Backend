@@ -143,4 +143,3 @@ def createComment(request) :
             'error' : 'Some error occurred due to some technical errors'
         })
     
-

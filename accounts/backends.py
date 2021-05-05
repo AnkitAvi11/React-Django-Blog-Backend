@@ -33,3 +33,6 @@ class EmailAuthentication :
 
         except User.DoesNotExist : 
             return None
+        
+        except : 
+            return None
